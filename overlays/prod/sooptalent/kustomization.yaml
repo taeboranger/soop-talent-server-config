@@ -8,4 +8,4 @@ resources:
 images:
 - name: lightstone1/soop-talent-server
   newName: lightstone1/soop-talent-server
-  newTag: 8cbe4f2fa42594d0cc5e89ba7fafe2f0f3641ec8
+  newTag: 9ca913903ea3db85a4d58d8dbd23c239ab0f87ff
