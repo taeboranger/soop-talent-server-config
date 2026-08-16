@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sooptalent-deployment
+spec:
+  replicas: 1
+  revisionHistoryLimit: 2
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: sooptalent
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: sooptalent
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      # 앱 이미지 하나를 쓴다. 서버 컨테이너가 시작되기 전에 DB 스키마만 맞춘다.
+      # replicas=1 / Recreate 배포라 한 번에 하나만 실행된다.
+      initContainers:
+        - name: migrate
+          image: lightstone1/soop-talent-server
+          imagePullPolicy: Always
+          command: ["/app/sooptalent-migrate"]
+          envFrom:
+            - secretRef:
+                name: soop-talent-server-prod-secret
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            readOnlyRootFilesystem: true
+      containers:
+        - name: sooptalent
+          image: lightstone1/soop-talent-server
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 8080
+          env:
+            - name: LISTEN
+              value: ":8080"
+            - name: PUBLIC_URL
+              value: https://soop-talent.cagea1.com
+          envFrom:
+            - secretRef:
+                name: soop-talent-server-prod-secret
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            readOnlyRootFilesystem: true
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 3
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 6
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 15
+            timeoutSeconds: 2
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: "1"
+              memory: 512Mi

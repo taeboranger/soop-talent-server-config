@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: sooptalent-ingress
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt-clusterissuer
+    nginx.ingress.kubernetes.io/proxy-body-size: 3m
+spec:
+  tls:
+    - hosts: [soop-talent.cagea1.com]
+      secretName: sooptalent-tls
+  rules:
+    - host: soop-talent.cagea1.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: sooptalent-service
+                port:
+                  number: 80
