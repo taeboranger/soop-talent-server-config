@@ -2,10 +2,10 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: sooptalent-prod
 resources:
-  - namespace.yaml
-  - vault-static-secret.yaml
-  - ../../../base/sooptalent
+- namespace.yaml
+- vault-static-secret.yaml
+- ../../../base/sooptalent
 images:
-  - name: lightstone1/soop-talent-server
-    newName: lightstone1/soop-talent-server
-    newTag: initial
+- name: lightstone1/soop-talent-server
+  newName: lightstone1/soop-talent-server
+  newTag: eb340e1df4f82fdd4ae083785d21e5606698e775
