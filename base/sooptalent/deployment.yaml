@@ -88,6 +88,10 @@ spec:
           env:
             - name: SERVER_INTERNAL_URL
               value: http://127.0.0.1:8080
+            # SDK 페이지는 localhost가 아닌 SOOP에 등록·공개된 서비스 Origin에서 연다.
+            # 브리지 → 서버 내부 API 호출만 위의 loopback 주소를 사용한다.
+            - name: CHAT_SDK_PAGE_URL
+              value: https://soop-talent.cagea1.com
             - name: CHROMIUM_PATH
               value: /usr/bin/chromium
             - name: HOME
