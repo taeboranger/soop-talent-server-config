@@ -77,3 +77,41 @@ spec:
             limits:
               cpu: "1"
               memory: 512Mi
+        # SOOP 공식 Chat SDK는 브라우저 JavaScript 전용이다. 한 Chromium 프로세스에서
+        # 스트리머별 페이지를 관리하고, 이벤트만 localhost의 Go 서버로 전달한다.
+        - name: chat-bridge
+          image: lightstone1/soop-talent-server
+          imagePullPolicy: Always
+          command: ["node", "/app/chat-bridge/bridge.mjs"]
+          env:
+            - name: SERVER_INTERNAL_URL
+              value: http://127.0.0.1:8080
+            - name: CHROMIUM_PATH
+              value: /usr/bin/chromium
+            - name: HOME
+              value: /tmp
+            - name: XDG_CONFIG_HOME
+              value: /tmp/chromium-config
+            - name: XDG_CACHE_HOME
+              value: /tmp/chromium-cache
+          envFrom:
+            - secretRef:
+                name: soop-talent-server-prod-secret
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            readOnlyRootFilesystem: true
+          volumeMounts:
+            - name: chromium-tmp
+              mountPath: /tmp
+          resources:
+            requests:
+              cpu: 200m
+              memory: 256Mi
+            limits:
+              cpu: "1"
+              memory: 768Mi
+      volumes:
+        - name: chromium-tmp
+          emptyDir: {}
