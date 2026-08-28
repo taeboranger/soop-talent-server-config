@@ -48,6 +48,9 @@ spec:
               value: ":8080"
             - name: PUBLIC_URL
               value: https://soop-talent.cagea1.com
+            # 같은 Pod의 Chat SDK 브리지. 채팅 스위치 변경 시 즉시 재연결을 요청한다.
+            - name: CHAT_BRIDGE_URL
+              value: http://127.0.0.1:8098
           envFrom:
             - secretRef:
                 name: soop-talent-server-prod-secret
