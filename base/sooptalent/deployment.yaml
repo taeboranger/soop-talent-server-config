@@ -17,6 +17,8 @@ spec:
     spec:
       securityContext:
         runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
         seccompProfile:
           type: RuntimeDefault
       # 앱 이미지 하나를 쓴다. 서버 컨테이너가 시작되기 전에 DB 스키마만 맞춘다.
